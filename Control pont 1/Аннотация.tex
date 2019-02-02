@@ -1,0 +1,54 @@
+\documentclass{article}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage[all]{xy}
+\usepackage[left=2cm,right=2cm, top=2cm,bottom=2cm,bindingoffset=0cm]{geometry}
+\usepackage{mathtext}
+
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\Perm}{\operatorname{S}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\Mat}{\operatorname{M}}
+\usepackage[12pt]{extsizes} % для того чтобы задать нестандартный 14-ый размер шрифта
+
+
+\title{Аннотация к научно исследовательской работе}
+\author{Подоляко Илья Александрович БПМИ-176}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{center}
+Иерархическое планирование поведения
+\end{center}
+
+\paragraph{}
+
+Темой исследования в настоящей работе является изучение алгоритмов иерархического планирования. \newline
+Цель работы - рассмотреть основные алгоритмы планирования, в частности алгоритм HEART, и сравнить его эффективность работы с алгоритмами реализованными в планнировщике pyperplan. \newline
+Основным методом проведения исследования является создание программы на языке Python. Также будут использоваться научные материалы по проблематике планирования поведения искусствнного агента. Алгоритм планнирования HEART основан на иерархической версии алгоритма POCL и алгоритма HTN. Процесс планирования алгоритма POCL осуществлятеся с использованием частично уточнённых планов состоящих из шагов и каузальных ссылок на уже найденные подпланы. HTN использует различные уровни иерархии действий представляя планы низкого уровня в виде абстрактных действий более высокого уровня.
+ Также будет использован планнировщик pyperplan, в котором реализованы известные подходы к планнированию поведения, что позволит сравнить алгоритм HEART уже с существующими алгоритмами.\newline
+Результатом работы должна быть разработанная программа реализующая логику алгоритма HEART. \newline
+Предполагается, что в итоге будет достигнута корректная работа алгоритма в реальных условиях. 
+
+\newpage
+\paragraph{Список источников}
+\paragraph{Стюарт Рассел, Питер Норвиг}
+Искусственный интеллект. Современный подход / 2-е изд.. Ж Пер. с англ. - М. : Издательский дом "Вильямс", 2006. -  1408 с. : ил. - Парал. тит. англ. ISBN 5-8459-0887-6 (рус.) \newline
+\paragraph{Antoine Gréa, Laetitia Matignon, and Samir Aknine}
+ - HEART: HiErarchical Abstraction for Real-Time Partial Order Casual Link Planning / Proceedings of the $1^{st}$ ICAPS Workshop on Hierarchical Planning
+\paragraph{Malik Ghallab, Dana Nau, and Paolo Traverso} 2004 Automated Planning and Acting, Cambridge University Press? editions. 00058
+\paragraph{Subbarao Kambhampati, Amol Mali, and Biplav Srivastava.} 1998/ Hybrid planning for partially hierarchial domains. In AAAI/IAAI, pages 882-888
+\paragraph{Dana S. Nau, Tsz-Chui Au, Okhtay Ilghami, Ugur Kuter, J. William Murdock, Dan Wu, and Fusun Yaman.} 2003. SHOP2: An HTN planning system. J. Artif. Intell. Res(JAIR), 20:379-404. 00891
+\paragraph{}ГОСТ Р 7.0.5–2008. Система стандартов по информации, библиотечному и
+издательскому делу. Библиографическая ссылка Общие требования и
+правила составления. М.– Стандартинформ, 2008.
+\paragraph{}ГОСТ 7.1-2003. Библиографическая запись. Библиографическое описание.
+Общие требования и правила составления.- М.: Изд-во стандартов, 2003.
+\paragraph{}ГОСТ 7.82-2001. Библиографическая запись. Библиографическое описание
+электронных ресурсов.- М.: Изд-во стандартов, 2001.
+
+\end{document}
