@@ -1,19 +1,15 @@
 #It is part of project in Higher School of Economics on FCS
 #
 #That project of planner:
-#This class implements the storage of the pddl language object.
+#This class implements the storage of the pddl language object
+#
+#
+
 
 
 
 class Domain:
     def __init__(self, name, types, predicates, actions, constants={}):
-        """
-        name: The name of the domain
-        types: A dict of typename->Type instances in the domain
-        predicates: A list of predicates in the domain
-        actions: A list of actions in the domain
-        constants: A dict of name->type pairs of the constants in the domain
-        """
         self.name = name
         self.types = types
         self.predicates = predicates
