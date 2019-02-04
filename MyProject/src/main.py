@@ -1,6 +1,7 @@
 import sys
 import logging
 import pddl.parser.domain as dm
+import pddl.parser.myparser as mp
 
 
 
@@ -23,5 +24,6 @@ except FileNotFoundError:
     exit(2)
 
 new = dm.Domain(domain)
-print(new.name)
-print(new.requirements)
+# for i in new.actions:
+#     print(i.name)
+#     print(i.parameters)
