@@ -43,7 +43,18 @@ class Domain:
 class Predicate:
     def __init__(self, data):
         self.name = ''
+        self.quantify = ''
         self.params = []
+
+        if data.find("and ") != -1 or \
+                data.find("or ") != -1 or \
+                data.find("not ") != -1 or \
+                data.find("exists ") != -1 \
+                or data.find("forall ") != -1:
+
+            self.quantify = data.split()[0]
+            data = mp.take_part(data)
+
 
         formal_view = data.split()
         self.name = formal_view[0]
@@ -56,15 +67,17 @@ class Predicate:
                 self.params[-1] = (self.params[-1], formal_view[i + 1])
 
 
+
 class Action:
     def __init__(self, data):
         self.name = ''
         self.parameters = []
+        self.quantifier_for_pre = ''
         self.precondition = []
+        self.quantifier_for_eff = ''
         self.effect = []
 
-        while data.find('(') != -1:
-            if data.find(":action") != -1:
+        if data.find(":action") != -1:
                 if data[data.find(':') + 1:].find(':') != -1:
                     end_of_part = data[data.find(':') + 1:].find(':')
                     self.name = data[:end_of_part].split()[1]
@@ -73,7 +86,7 @@ class Action:
                     self.name = data.split()[1]
                     data = ''
 
-            if data.find(":parameters") != -1:
+        if data.find(":parameters") != -1:
                 begin_of_part = data.find(":parameters")
                 if data[begin_of_part + 1:].find(':') != -1:
                     end_of_part = data[begin_of_part + 1:].find(':')
@@ -98,17 +111,61 @@ class Action:
                             self.parameters[-1] = (self.parameters[-1], formal_view[i + 1])
                         data = ''
 
-            if data.find(":precondition") != -1:
+        if data.find(":precondition") != -1:
                 begin_of_part = data.find(":precondition")
                 if data[begin_of_part + 1:].find(':') != -1:
                     end_of_part = data[begin_of_part + 1:].find(':')
                     formal_view = data[begin_of_part + 1:end_of_part]
-                    formal_view = mp.take_part(formal_view)
+
+                    if formal_view.find("and ") != -1 or \
+                            formal_view.find("or ") != -1 or \
+                            formal_view.find("not ") != -1 or \
+                            formal_view.find("exists ") != -1 \
+                            or formal_view.find("forall ") != -1:
+                        formal_view = mp.take_part(formal_view)
+                        self.quantifier_for_pre = (formal_view.split()[0])
+
+                    while formal_view.find('(') != -1:
+                        pre = mp.take_part(formal_view)
+                        self.precondition.append(Predicate(pre))
+                        formal_view = mp.delete_part(formal_view)
+                    data = data[end_of_part:]
+
+                else:
+                    formal_view = data[begin_of_part + 1:]
+
+                    if formal_view.find("and ") != -1 or \
+                            formal_view.find("or ") != -1 or \
+                            formal_view.find("not ") != -1 or \
+                            formal_view.find("exists ") != -1 \
+                            or formal_view.find("forall ") != -1:
+                        formal_view = mp.take_part(formal_view)
+                        self.quantifier_for_pre = (formal_view.split()[0])
+
+                    while formal_view.find('(') != -1:
+                        pre = mp.take_part(formal_view)
+                        self.precondition.append(Predicate(pre))
+                        formal_view = mp.delete_part(formal_view)
+                    data = ''
+
+
+
+
                     print(formal_view)
 
+        if data.find(":effect"):
+                formal_view = data[data.find(":effect"):]
+                if formal_view.find("and ") != -1 or \
+                        formal_view.find("or ") != -1 or \
+                        formal_view.find("not ") != -1 or \
+                        formal_view.find("exists ") != -1 \
+                        or formal_view.find("forall ") != -1:
+                    formal_view = mp.take_part(formal_view)
+                    self.quantifier_for_eff = (formal_view.split()[0])
+                while formal_view.find('(') != -1:
+                    pre = mp.take_part(formal_view)
+                    self.effect.append(Predicate(pre))
+                    formal_view = mp.delete_part(formal_view)
+                data = ''
 
-            #print(data)
-            data = ''
-
-
-
+        data = ''

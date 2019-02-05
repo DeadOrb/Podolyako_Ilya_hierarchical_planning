@@ -24,6 +24,8 @@ except FileNotFoundError:
     exit(2)
 
 new = dm.Domain(domain)
-# for i in new.actions:
-#     print(i.name)
-#     print(i.parameters)
+for i in new.actions:
+    print(i.name)
+    print(i.quantifier_for_eff)
+    for j in i.effect:
+        print(j. quantify, j.name, j.params)

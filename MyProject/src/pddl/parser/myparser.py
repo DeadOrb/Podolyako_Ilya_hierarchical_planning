@@ -32,6 +32,7 @@ def delete_part(file):
         if right_parentheses == 0:
             return file[:first] + file[i + 1:]
 
+
 def take_line(file):
     end_of_part = file.find('\n')
     return file[:end_of_part]
