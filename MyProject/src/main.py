@@ -1,6 +1,7 @@
 import sys
 import logging
 import pddl.parser.domain as dm
+import pddl.parser.problem as pb
 import pddl.parser.myparser as mp
 
 
@@ -23,9 +24,31 @@ except FileNotFoundError:
     logging.error("Неверный путь к таске!")
     exit(2)
 
-new = dm.Domain(domain)
-for i in new.actions:
-    print(i.name)
-    print(i.quantifier_for_eff)
-    for j in i.effect:
-        print(j. quantify, j.name, j.params)
+dom = dm.Domain(domain)
+prob = pb.Problem(task)
+
+
+print(domain)
+print('________________________________________________________________________________________________________________')
+print(dom.name)
+print(dom.requirements)
+print(dom.types)
+for i in dom.predicates:
+    print(i.quantify, i.name, i.params)
+for i in dom.actions:
+    print(i.name, i.parameters)
+    print(i.quantifier_for_pre, i.precondition)
+    print(i.quantifier_for_eff, i.effect)
+
+print('________________________________________________________________________________________________________________')
+
+print(task)
+print('________________________________________________________________________________________________________________')
+print(prob.name)
+print(prob.domain_name)
+print(prob.objects)
+for i in prob.init:
+    print(i.name, i.quantify, i.params)
+print(prob.goal_quantify)
+for i in prob.goal:
+    print(i.name, i.params)

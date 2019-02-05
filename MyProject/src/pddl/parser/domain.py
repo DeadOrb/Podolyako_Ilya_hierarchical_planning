@@ -12,7 +12,11 @@ class Domain:
 
         file = mp.take_part(file)
         file = file[file.find('('):]
-        self.name = mp.take_part(file)
+        for_name = mp.take_part(file).split()
+        name = ''
+        for i in range(1, len(for_name)):
+            name += for_name[i]
+        self.name = name
         file = mp.delete_part(file)
 
         while file.find('(') != -1:
@@ -21,19 +25,19 @@ class Domain:
             if flag_requirements[0] == ":requirements":
                 self.requirements = flag_requirements[1:]
 
-            if flag_requirements[0] == ":types":
+            elif flag_requirements[0] == ":types":
                 self.types = flag_requirements[1:]
 
-            if flag_requirements[0] == ":constants":
+            elif flag_requirements[0] == ":constants":
                 self.constants = flag_requirements[1:]
 
-            if flag_requirements[0] == ":predicates":
+            elif flag_requirements[0] == ":predicates":
                 def_predicates = mp.take_part(file)
                 while def_predicates.find('(') != -1:
                     self.predicates.append(Predicate(mp.take_part(def_predicates)))
                     def_predicates = mp.delete_part(def_predicates)
 
-            if flag_requirements[0] == ":action":
+            elif flag_requirements[0] == ":action":
                 def_action = mp.take_part(file)
                 self.actions.append(Action(def_action))
 
