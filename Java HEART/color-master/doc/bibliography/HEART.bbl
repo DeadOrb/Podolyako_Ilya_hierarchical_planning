@@ -7,7 +7,7 @@
   url = {http://www.aaai.org/ocs/index.php/ICAPS/ICAPS10/paper/viewFile/1453@article/1532},
   booktitle = {Proceedings of the {{International Conference}} on {{Automated Planning}} and {{Scheduling}}},
   publisher = {{AAAI Press}},
-  author = {G\"obelbecker, Moritz and Keller, Thomas and Eyerich, Patrick and Brenner, Michael and Nebel, Bernhard},
+  author = {G{\"o}belbecker, Moritz and Keller, Thomas and Eyerich, Patrick and Brenner, Michael and Nebel, Bernhard},
   month = may,
   year = {2010},
   pages = {81--88},
@@ -32,7 +32,7 @@
   urldate = {2016-02-20},
   url = {http://www.aaai.org/Papers/AAAI/2004/AAAI04-098.pdf},
   booktitle = {{{AAAI}}},
-  author = {Lemai, Solange and Ingrand, F\'elix},
+  author = {Lemai, Solange and Ingrand, F{\'e}lix},
   year = {2004},
   pages = {617--622},
   file = {/home/antoine/.zotero/data/storage/GWQNJ92F/lemai_interleaving_temporal_planning_and_execution_in_robotics_domains_2004.pdf;/home/antoine/.zotero/data/storage/P4PDGU79/Lemai_Ingrand_2004_Interleaving temporal planning and execution in robotics domains.pdf},
@@ -281,7 +281,7 @@
   url = {http://dl.acm.org/citation.cfm?id=3038573},
   booktitle = {Proceedings of the {{Twenty}}-{{Second International Conference}} on {{International Conference}} on {{Automated Planning}} and {{Scheduling}}},
   publisher = {{AAAI Press}},
-  author = {Seegebarth, Bastian and M\"uller, Felix and Schattenberg, Bernd and Biundo, Susanne},
+  author = {Seegebarth, Bastian and M{\"u}ller, Felix and Schattenberg, Bernd and Biundo, Susanne},
   year = {2012},
   keywords = {_tablet},
   pages = {225--233},
@@ -307,7 +307,7 @@
   url = {https://www.uni-ulm.de/fileadmin/website_uni_ulm/iui.inst.090/Publikationen/2016/Bercher16HybridPlanningComplexities.pdf},
   booktitle = {Proceedings of the 22nd {{European Conference}} on {{Artificial Intelligence}} ({{ECAI}} 2016)},
   publisher = {{IOS Press}},
-  author = {Bercher, Pascal and H\"oller, Daniel and Behnke, Gregor and Biundo, Susanne},
+  author = {Bercher, Pascal and H{\"o}ller, Daniel and Behnke, Gregor and Biundo, Susanne},
   year = {2016},
   keywords = {_tablet},
   pages = {225-233},
@@ -365,7 +365,7 @@ The domain can be downloaded from http://www.uni-ulm.de/fileadmin/website\textsu
 @inproceedings{holler_plan_2018,
   title = {Plan and {{Goal Recognition}} as {{HTN Planning}}},
   booktitle = {Proceedings of {{AAAI Workshop}} on {{Plan}}, {{Activity}} and {{Intent Recognition}}},
-  author = {H\"oller, Daniel and Bercher, Pascal and Behnke, Gregor and Biundo, Susanne},
+  author = {H{\"o}ller, Daniel and Bercher, Pascal and Behnke, Gregor and Biundo, Susanne},
   year = {2018},
   file = {/home/antoine/.zotero/data/storage/6F8ZU2FP/Höller et al. - 2018 - Plan and Goal Recognition as HTN Planning.pdf;/home/antoine/.zotero/data/storage/8EXSRMXC/Höller et al. - 2018 - Plan and Goal Recognition as HTN Planning.pdf}
 }
@@ -441,7 +441,7 @@ The domain can be downloaded from http://www.uni-ulm.de/fileadmin/website\textsu
   title = {A Flexible {{ANML}} Actor and Planner in Robotics},
   shorttitle = {{{FAPE}}},
   booktitle = {Planning and {{Robotics}} ({{PlanRob}}) {{Workshop}} ({{ICAPS}})},
-  author = {Dvorak, Filip and {Bit-Monnot}, Arthur and Ingrand, F\'elix and Ghallab, Malik},
+  author = {Dvorak, Filip and {Bit-Monnot}, Arthur and Ingrand, F{\'e}lix and Ghallab, Malik},
   year = {2014},
   file = {/home/antoine/.zotero/data/storage/X3M9HEXK/dvorak_a_flexible_anml_actor_and_planner_in_robotics_2014.pdf;/home/antoine/.zotero/data/storage/CLG8ZZNV/hal-01138111.html}
 }

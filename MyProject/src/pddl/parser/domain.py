@@ -6,9 +6,9 @@ class Domain:
         self.name = ''
         self.requirements = []
         self.types = []
-#        self.constants = [] not today
         self.predicates = []
         self.actions = []
+        self.methods = []
 
         file = mp.take_part(file)
         file = file[file.find('('):]
@@ -34,7 +34,7 @@ class Domain:
             elif flag_requirements[0] == ":predicates":
                 def_predicates = mp.take_part(file)
                 while def_predicates.find('(') != -1:
-                    self.predicates.append(Predicate(mp.take_part(def_predicates)))
+                    self.predicates.append(mp.Predicate(mp.take_part(def_predicates)))
                     def_predicates = mp.delete_part(def_predicates)
 
             elif flag_requirements[0] == ":action":
@@ -42,34 +42,6 @@ class Domain:
                 self.actions.append(Action(def_action))
 
             file = mp.delete_part(file)
-
-
-class Predicate:
-    def __init__(self, data):
-        self.name = ''
-        self.quantify = ''
-        self.params = []
-
-        if data.find("and ") != -1 or \
-                data.find("or ") != -1 or \
-                data.find("not ") != -1 or \
-                data.find("exists ") != -1 \
-                or data.find("forall ") != -1:
-
-            self.quantify = data.split()[0]
-            data = mp.take_part(data)
-
-
-        formal_view = data.split()
-        self.name = formal_view[0]
-        for i in range(1, len(formal_view)):
-
-            if formal_view[i].find('?') != -1:
-                self.params.append(formal_view[i])
-
-            if formal_view[i] == '-':
-                self.params[-1] = (self.params[-1], formal_view[i + 1])
-
 
 
 class Action:
@@ -131,7 +103,7 @@ class Action:
 
                     while formal_view.find('(') != -1:
                         pre = mp.take_part(formal_view)
-                        self.precondition.append(Predicate(pre))
+                        self.precondition.append(mp.Predicate(pre))
                         formal_view = mp.delete_part(formal_view)
                     data = data[end_of_part:]
 
@@ -148,14 +120,9 @@ class Action:
 
                     while formal_view.find('(') != -1:
                         pre = mp.take_part(formal_view)
-                        self.precondition.append(Predicate(pre))
+                        self.precondition.append(mp.Predicate(pre))
                         formal_view = mp.delete_part(formal_view)
                     data = ''
-
-
-
-
-                    print(formal_view)
 
         if data.find(":effect"):
                 formal_view = data[data.find(":effect"):]
@@ -168,8 +135,9 @@ class Action:
                     self.quantifier_for_eff = (formal_view.split()[0])
                 while formal_view.find('(') != -1:
                     pre = mp.take_part(formal_view)
-                    self.effect.append(Predicate(pre))
+                    self.effect.append(mp.Predicate(pre))
                     formal_view = mp.delete_part(formal_view)
                 data = ''
 
         data = ''
+

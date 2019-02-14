@@ -1,53 +1,77 @@
-;; logistics domain Typed version.
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; 4 Op-blocks world
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain logistics)
-  (:requirements :strips :typing)
-  (:types truck
-          airplane - vehicle
-          package
-          vehicle - physobj
-          airport
-          location - place
-          city
-          place
-          physobj - object)
+(define (domain BLOCKS)
+  (:types block)
+  (:predicates (on ?x - block ?y - block)
+	       (ontable ?x - block)
+	       (clear ?x - block)
+	       (handempty)
+	       (holding ?x - block)
+	       )
 
-  (:predicates 	(in-city ?loc - place ?city - city)
-		(at ?obj - physobj ?loc - place)
-		(in ?pkg - package ?veh - vehicle))
+  (:action pick-up
+	     :parameters (?x - block)
+	     :precondition (and (clear ?x) (ontable ?x) (handempty))
+	     :effect
+	     (and (not (ontable ?x))
+		   (not (clear ?x))
+		   (not (handempty))
+		   (holding ?x)))
 
-(:action LOAD-TRUCK
-   :parameters    (?pkg - package ?truck - truck ?loc - place)
-   :precondition  (and (at ?truck ?loc) (at ?pkg ?loc))
-   :effect        (and (not (at ?pkg ?loc)) (in ?pkg ?truck)))
 
-(:action LOAD-AIRPLANE
-  :parameters   (?pkg - package ?airplane - airplane ?loc - place)
-  :precondition (and (at ?pkg ?loc) (at ?airplane ?loc))
-  :effect       (and (not (at ?pkg ?loc)) (in ?pkg ?airplane)))
+  (:action put-down
+	     :parameters (?x - block)
+	     :precondition (holding ?x)
+	     :effect
+	     (and (not (holding ?x))
+		   (clear ?x)
+		   (handempty)
+		   (ontable ?x)))
 
-(:action UNLOAD-TRUCK
-  :parameters   (?pkg - package ?truck - truck ?loc - place)
-  :precondition (and (at ?truck ?loc) (in ?pkg ?truck))
-  :effect       (and (not (in ?pkg ?truck)) (at ?pkg ?loc)))
+  (:action stack
+	     :parameters (?x - block ?y - block)
+	     :precondition (and (holding ?x) (clear ?y))
+	     :effect
+	     (and (not (holding ?x))
+		   (not (clear ?y))
+		   (clear ?x)
+		   (handempty)
+		   (on ?x ?y)))
 
-(:action UNLOAD-AIRPLANE
-  :parameters    (?pkg - package ?airplane - airplane ?loc - place)
-  :precondition  (and (in ?pkg ?airplane) (at ?airplane ?loc))
-  :effect        (and (not (in ?pkg ?airplane)) (at ?pkg ?loc)))
+  (:action unstack
+	     :parameters (?x - block ?y - block)
+	     :precondition (and (on ?x ?y) (clear ?x) (handempty))
+	     :effect
+	     (and (holding ?x)
+		   (clear ?y)
+		   (not (clear ?x))
+		   (not (handempty))
+		   (not (on ?x ?y))))
 
-(:action DRIVE-TRUCK
-  :parameters (?truck - truck ?loc-from - place ?loc-to - place ?city - city)
-  :precondition
-   (and (at ?truck ?loc-from) (in-city ?loc-from ?city) (in-city ?loc-to ?city))
-  :effect
-   (and (not (at ?truck ?loc-from)) (at ?truck ?loc-to)))
-
-(:action FLY-AIRPLANE
-  :parameters (?airplane - airplane ?loc-from - airport ?loc-to - airport)
-  :precondition
-   (at ?airplane ?loc-from)
-  :effect
-   (and (not (at ?airplane ?loc-from)) (at ?airplane ?loc-to)))
+  (:action destroy_tower
+          :parameters (?x - block ?y - block)
+          :precondition (and (ontable ?x) (on ?x ?y) (clear ?y) (handempty))
+          :effect
+          (and (ontable ?y)
+           (not (on ?x ?y))
+           (clear ?x)))
 )
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  (:action make_2_lvl_tower
+          :parameters (?x - block ?y - block)
+          :precondition (and (ontable ?x) (ontable ?y) (clear ?x) (clear y?))
+          :effect
+          (and (not (ontable ?y))
+           (not (clear x?))
+           (on ?x ?y)))
+
+  (:action make_4_lvl_tower
+          :parameters (?x - block ?y - block ?z - block ?w - block)
+          :precondition (and (ontable ?x) (ontable ?y) (ontable ?z) (ontable ?w)
+          (clear ?x) (clear ?y) (clear ?z) (clear ?w))
+          :effect
+          (and (not (ontable ?y)) (not (ontable ?z)) (not (ontable ?w))
+           (not (clear x?)) (not (clear y?)) (not (clear z?))
+           (on ?x ?y) (on ?y ?z) (on ?z ?w)))
