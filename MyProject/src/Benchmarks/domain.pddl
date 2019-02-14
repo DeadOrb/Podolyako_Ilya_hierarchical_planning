@@ -30,16 +30,6 @@
 		   (handempty)
 		   (ontable ?x)))
 
-  (:action stack
-	     :parameters (?x - block ?y - block)
-	     :precondition (and (holding ?x) (clear ?y))
-	     :effect
-	     (and (not (holding ?x))
-		   (not (clear ?y))
-		   (clear ?x)
-		   (handempty)
-		   (on ?x ?y)))
-
   (:action unstack
 	     :parameters (?x - block ?y - block)
 	     :precondition (and (on ?x ?y) (clear ?x) (handempty))
@@ -56,22 +46,7 @@
           :effect
           (and (ontable ?y)
            (not (on ?x ?y))
+           (ontable ?x)
+           (clear ?y)
            (clear ?x)))
 )
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  (:action make_2_lvl_tower
-          :parameters (?x - block ?y - block)
-          :precondition (and (ontable ?x) (ontable ?y) (clear ?x) (clear y?))
-          :effect
-          (and (not (ontable ?y))
-           (not (clear x?))
-           (on ?x ?y)))
-
-  (:action make_4_lvl_tower
-          :parameters (?x - block ?y - block ?z - block ?w - block)
-          :precondition (and (ontable ?x) (ontable ?y) (ontable ?z) (ontable ?w)
-          (clear ?x) (clear ?y) (clear ?z) (clear ?w))
-          :effect
-          (and (not (ontable ?y)) (not (ontable ?z)) (not (ontable ?w))
-           (not (clear x?)) (not (clear y?)) (not (clear z?))
-           (on ?x ?y) (on ?y ?z) (on ?z ?w)))

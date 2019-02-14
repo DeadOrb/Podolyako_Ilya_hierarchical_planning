@@ -25,8 +25,7 @@ def __main__():
 
     dom = dm.Domain(domain)
     prob = pb.Problem(task)
-    htn.HTN(dom, prob)
-
+    htn.HTN(dom)
 
 
 if __name__ == "__main__":
