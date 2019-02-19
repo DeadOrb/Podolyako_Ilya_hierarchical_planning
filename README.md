@@ -19,7 +19,9 @@
 
 >Формально домен задачи выглядит так:
 
->\<domain\> = (define
+>\<domain\> = (
+
+>define
 
 >(domain name)
 
@@ -33,4 +35,6 @@
 
 >(\<action-def\>)
 
->(\<methods-def\>))
+>(\<methods-def\>)
+
+>)
