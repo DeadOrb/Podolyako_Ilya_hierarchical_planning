@@ -23,14 +23,14 @@
 
 >(domain name)
 
->(:requirements <require-flag>)
+>(:requirements \<require-flag\>)
 
->(:types <types-definition>
+>(:types \<types-definition\>)
 
->(:constants <constants-definition>)
+>(:constants \<constants-definition\>)
   
->(:predicates <atomic-formula-prototype>)
+>(:predicates \<atomic-formula-prototype\>)
 
->(<action-def>)
+>(\<action-def\>)
 
->(<methods-def>))
+>(\<methods-def\>))
