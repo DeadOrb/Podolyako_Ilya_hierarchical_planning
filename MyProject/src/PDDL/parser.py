@@ -70,6 +70,8 @@ class ParserForDomain:
 
 def take_part(file):
     first = file.find('(')
+    if first == -1:
+        return ' '
     right_parentheses = 1
     for i in range(first + 1, len(file)):
 
@@ -88,6 +90,8 @@ def take_part(file):
 
 def delete_part(file):
     first = file.find('(')
+    if first == -1:
+        return ' '
     right_parentheses = 1
     for i in range(first + 1, len(file)):
 
