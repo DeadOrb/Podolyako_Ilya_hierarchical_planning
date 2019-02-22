@@ -30,5 +30,6 @@ def __main__():
     domain = gr.make_domain(domain)
     domain.print()
 
+
 if __name__ == "__main__":
     __main__()

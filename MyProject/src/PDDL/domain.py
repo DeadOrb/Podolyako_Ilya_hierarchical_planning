@@ -25,7 +25,7 @@ class Domain:
         for predicate in self.predicates:
             predicate.print()
 
-        print('\nActions')
+        print('\nActions:')
         for action in self.actions:
             action.print()
             print()
