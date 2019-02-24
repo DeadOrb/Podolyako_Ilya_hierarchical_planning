@@ -120,12 +120,13 @@ class Action:
                 text = parser.delete_part(text)
 
     def print(self):
-        print('name:', self.name)
-        print('parameters:', *self.parameters)
-        print('precondition:', '\n', self.quantify_for_precondition)
+        print('name:', self.name, '\n')
+        print('parameters:', *self.parameters, '\n')
+        print('precondition:', self.quantify_for_precondition)
         for predicate in self.precondition:
             print(predicate)
-        print('effect:', '\n', self.quantify_for_effect)
+        print('')
+        print('effect:', self.quantify_for_effect)
         for predicate in self.effect:
             print(predicate)
 

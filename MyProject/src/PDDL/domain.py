@@ -6,26 +6,25 @@ class Domain:
         self.constants = []
         self.predicates = []
         self.actions = []
-        self.methods = []
 
     def print(self):
-        print('\nname:')
+        print('\n\nname:')
         print(self.name)
 
-        print('\nrequirements:')
+        print('\n\nrequirements:')
         print(self.requirements)
 
-        print('\ntypes:')
+        print('\n\ntypes:')
         print(self.types)
 
-        print('\nconstants:')
+        print('\n\nconstants:')
         print(self.constants)
 
-        print('\npredicates:')
+        print('\n\npredicates:')
         for predicate in self.predicates:
             predicate.print()
 
-        print('\nActions:')
+        print('\n\nActions:\n')
         for action in self.actions:
             action.print()
-            print()
+            print('')

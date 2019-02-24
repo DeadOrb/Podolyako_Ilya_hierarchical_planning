@@ -29,7 +29,7 @@
 		   (clear ?x)
 		   (handempty)
 		   (ontable ?x)))
-  (:action stack
+      (:action stack
 	     :parameters (?x - block ?y - block)
 	     :precondition (and (holding ?x) (clear ?y))
 	     :effect

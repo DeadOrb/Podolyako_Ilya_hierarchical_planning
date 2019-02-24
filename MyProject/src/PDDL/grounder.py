@@ -40,9 +40,6 @@ def define_methods(methods, domain):
 
 
 def make_action_from_methods(method, names, domain):
-    # print(method)
-    # print(names)
-    # print(domain)
     # TODO: снова вопрос о и/или. Надо узнать нужен ли или вообще
     new_action = fields.Action()
     new_action.name = method[0]
@@ -148,8 +145,6 @@ def find_action(domain, subgoals, order, names):
         for i in names:
             if i[0] == name_order_action:
                 make_action_from_methods(i, names, domain)
-                print(subgoals)
-                print(order)
                 for j in domain.actions:
                     if j.name == name_order_action:
                         action = j
