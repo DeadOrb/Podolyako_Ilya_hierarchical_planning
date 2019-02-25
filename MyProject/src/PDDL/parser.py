@@ -67,6 +67,45 @@ class ParserForDomain:
             print(method)
             print('********************************************************************************************')
 
+class ParserForTask:
+    def __init__(self, text_task):
+        self.name = ''
+        self.name_of_domain = ''
+        self.objects = ''
+        self.init = ''
+        self.goal = ''
+
+        text_task = take_part(text_task)
+
+        self.name = take_part(text_task)
+        text_task = delete_part(text_task)
+
+        self.name_of_domain = take_part(text_task)
+        text_task = delete_part(text_task)
+
+        self.objects = take_part(text_task)
+        text_task = delete_part(text_task)
+
+        self.init = take_part(text_task)
+        text_task = delete_part(text_task)
+
+        self.goal = take_part(text_task)
+
+    def print(self):
+        print(self.name)
+        print('********************************************************************************************')
+
+        print(self.name_of_domain)
+        print('********************************************************************************************')
+
+        print(self.objects)
+        print('********************************************************************************************')
+
+        print(self.init)
+        print('********************************************************************************************')
+
+        print(self.goal)
+
 
 def take_part(file):
     first = file.find('(')

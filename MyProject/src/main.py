@@ -3,7 +3,6 @@
 import sys
 import logging
 import src.PDDL.grounder as gr
-import src.PDDL.parser as parser
 
 
 def __main__():
@@ -28,7 +27,9 @@ def __main__():
         exit(2)
 
     domain = gr.make_domain(domain)
-    domain.print()
+    # domain.print()
+    task = gr.make_task(task)
+    task.print()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import src.PDDL.domain as dom
 import src.PDDL.parser as parser
 import src.PDDL.fields as fields
+import src.PDDL.task as tsk
 import re
 
 
@@ -28,6 +29,45 @@ def make_domain(file):
     define_methods(parsed_domain.methods, domain)
 
     return domain
+
+
+def make_task(file):
+    task = tsk.Task()
+
+    parsed_task = parser.ParserForTask(file)
+
+    task.name = re.sub(r'problem ', '', parsed_task.name)
+
+    task.name_of_domain = re.sub(r':domain ', '', parsed_task.name_of_domain)
+
+    parsed_objects = re.sub(r':objects', '', parsed_task.objects).split()
+    list_of_objects = []
+    i = 0
+    while i != len(parsed_objects):
+        if parsed_objects[i] == '-':
+            for j in range(i - 1, -1, -1):
+                list_of_objects.append([parsed_objects[j], parsed_objects[i + 1]])
+            i += 1
+        i += 1
+
+    parsed_init = parsed_task.init
+    while parsed_init.find('(') != -1:
+        pre = parser.take_part(parsed_init)
+        task.init.append('(' + pre + ')')
+        parsed_init = parser.delete_part(parsed_init)
+
+    parsed_goal = parsed_task.goal
+    # TODO: только и
+    if parsed_goal.find('(and'):
+        task.quantify_for_goal = 'and'
+        parsed_goal = parser.take_part(parsed_goal)
+    while parsed_goal.find('(') != -1:
+        pre = parser.take_part(parsed_goal)
+        task.goal.append('(' + pre + ')')
+        parsed_goal = parser.delete_part(parsed_goal)
+
+    return task
+
 
 
 def define_methods(methods, domain):
