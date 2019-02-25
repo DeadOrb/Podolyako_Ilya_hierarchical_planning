@@ -12,7 +12,6 @@ class Predicate:
         if text.find('not') != -1:
             self.positively = False
             text = parser.take_part(text)
-
         self.name = re.search(r'\w+', text).group(0)
         objects = re.findall(r'\?\w+ - \w+', text)
         for type in objects:
@@ -27,9 +26,8 @@ class Predicate:
 
     def make_predicate(self, param):
         new_predicate = '('
-        for i in self.param_type:
-            for j in param:
-                if i != j[1]:
+        for i in range(len(param)):
+                if self.param_type[i] != param[i][-1]:
                     logging.error("Неправильно определенные действия или не хватате предикатов!")
         new_predicate += self.name
         for i in param:
@@ -64,8 +62,8 @@ class Action:
             for param in parameters:
                 self.parameters.append([param.split()[0], param.split()[-1]])
             text = parser.delete_part(text)
-
             precondition = parser.take_part(text)
+
             quantify = re.search(r':precondition\s\(and', text)
             if quantify is not None:
                 if quantify.group(0).find('and') != -1:
@@ -75,7 +73,14 @@ class Action:
             else:
                 precondition = '(' + precondition + ')'
             while precondition.find(')') != -1:
+                positivity = True
+                predicate = parser.take_part(text)
+
                 predicate = parser.take_part(precondition)
+
+                if predicate.find('not') != -1:
+                    positivity = False
+                    predicate = parser.take_part(predicate)
                 name_predicate = re.search(r'\w+', predicate).group(0)
                 param = re.findall(r'\?\w+', predicate)
                 predicate_param = []
@@ -86,7 +91,12 @@ class Action:
                 for i in domain.predicates:
                     if i.name == name_predicate:
                         actual_predicate = i
-                self.precondition.append(Predicate.make_predicate(actual_predicate, predicate_param))
+
+                if positivity:
+                    self.precondition.append(Predicate.make_predicate(actual_predicate, predicate_param))
+                else:
+                    self.precondition.append('(not ' + Predicate.make_predicate(actual_predicate, predicate_param) + ')')
+
                 precondition = parser.delete_part(precondition)
             text = parser.delete_part(text)
 
@@ -145,7 +155,6 @@ class Action:
         for i in range(len(effect)):
             for j in range(len(parameters)):
                 effect[i] = effect[i].replace(conformity_parameters[j][1], parameters[j])
-
         for i in self.precondition:
             pre = i
             for j in range(len(conformity_parameters)):

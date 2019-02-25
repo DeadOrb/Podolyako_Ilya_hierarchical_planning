@@ -42,13 +42,16 @@ def make_task(file):
 
     parsed_objects = re.sub(r':objects', '', parsed_task.objects).split()
     list_of_objects = []
+    last_i = -1
     i = 0
     while i != len(parsed_objects):
         if parsed_objects[i] == '-':
-            for j in range(i - 1, -1, -1):
+            for j in range(i - 1, last_i, -1):
                 list_of_objects.append([parsed_objects[j], parsed_objects[i + 1]])
             i += 1
+            last_i = i
         i += 1
+    task.objects = list_of_objects
 
     parsed_init = parsed_task.init
     while parsed_init.find('(') != -1:
@@ -69,7 +72,6 @@ def make_task(file):
     return task
 
 
-
 def define_methods(methods, domain):
     names_of_methods = []
     for i in methods:
@@ -85,16 +87,13 @@ def make_action_from_methods(method, names, domain):
     new_action.name = method[0]
 
     text = method[2]
-
     text_parameters = parser.take_part(text)
     parameters = re.findall(r'\?\w+ - \w+', text_parameters)
     for param in parameters:
         new_action.parameters.append([param.split()[0], param.split()[-1]])
     text = parser.delete_part(text)
-
     subgoals = take_tasks(parser.take_part(text))
     text = parser.delete_part(text)
-
     ordering = take_ordering(parser.take_part(text))
     text = parser.delete_part(text)
 
@@ -103,7 +102,6 @@ def make_action_from_methods(method, names, domain):
     precondition = []
     while order != 'goal':
         order = find_order(order, ordering)
-
         if order == 'goal':
             break
         eff = []
@@ -175,18 +173,18 @@ def find_order_action(order, subgoals):
 
 
 def find_action(domain, subgoals, order, names):
-    action = ''
-    name_order_action = find_order_action(order, subgoals)[1]
+    action = fields.Action()
+    name_order_action = find_order_action(order, subgoals)
     for i in domain.actions:
-        if i.name == name_order_action:
+        if i.name == name_order_action[1]:
             action = i
             break
     else:
         for i in names:
-            if i[0] == name_order_action:
+            if i[0] == name_order_action[1]:
                 make_action_from_methods(i, names, domain)
                 for j in domain.actions:
-                    if j.name == name_order_action:
+                    if j.name == name_order_action[1]:
                         action = j
                         break
     return action

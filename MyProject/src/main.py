@@ -2,7 +2,7 @@
 # Если название домена не будет совпадать с требующимся у таски, программа выкинет ошибку.
 import sys
 import logging
-import src.PDDL.grounder as gr
+import src.PDDL.problem as prb
 
 
 def __main__():
@@ -26,10 +26,9 @@ def __main__():
         logging.error("Неверный путь к таске!")
         exit(2)
 
-    domain = gr.make_domain(domain)
-    # domain.print()
-    task = gr.make_task(task)
-    task.print()
+    problem = prb.Problem(domain, task)
+    # problem.domain.print()
+    problem.task.print()
 
 
 if __name__ == "__main__":

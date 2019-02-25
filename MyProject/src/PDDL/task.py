@@ -12,7 +12,7 @@ class Task:
 
         print('\n\nname_of_domain:\n', self.name_of_domain)
 
-        print('\n\nobjects:\n', self.objects)
+        print('\n\nobjects:\n', *self.objects)
 
         print('\n\ninit:\n', *self.init)
 
