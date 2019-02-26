@@ -3,6 +3,7 @@
 import sys
 import logging
 import src.PDDL.problem as prb
+import src.Algorithms.POP.POP as pop
 
 
 def __main__():
@@ -27,8 +28,7 @@ def __main__():
         exit(2)
 
     problem = prb.Problem(domain, task)
-    # problem.domain.print()
-    problem.task.print()
+    pop.POP(problem)
 
 
 if __name__ == "__main__":

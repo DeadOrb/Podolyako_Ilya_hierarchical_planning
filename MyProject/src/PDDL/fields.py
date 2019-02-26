@@ -46,6 +46,7 @@ class Action:
             self.precondition = []
             self.quantify_for_effect = ''
             self.effect = []
+            self.duration = 1
         else:
 
             self.name = ''
@@ -54,6 +55,7 @@ class Action:
             self.precondition = []
             self.quantify_for_effect = ''
             self.effect = []
+            self.duration = 1
 
             self.name = re.sub(r':action ', '', re.search(r':action [\w, -]+', text).group(0))
 
@@ -165,3 +167,6 @@ class Action:
                 precondition[i] = precondition[i].replace(conformity_parameters[j][1], parameters[j])
 
         return precondition, effect
+
+    # def predicate_in_action(self, predicate):
+
