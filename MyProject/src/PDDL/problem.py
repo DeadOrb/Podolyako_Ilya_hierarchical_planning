@@ -1,7 +1,17 @@
-import src.PDDL.grounder as gr
+#
+import src.PDDL.parser as parser
+import src.PDDL.grounder as grounder
+import src.PDDL.domain as dm
+import src.PDDL.task as ts
 
 
 class Problem:
-    def __init__(self, domain, task):
-        self.domain = gr.make_domain(domain)
-        self.task = gr.make_task(task)
+    def __init__(self, domain_text, task_text):
+        self.domain = dm.Domain()
+        self.task = ts.Task()
+
+        parsed_domain = parser.ParserForDomain(domain_text)
+        parsed_task = parser.ParserForTask(task_text)
+
+        grounder.GrounderForDomain(parsed_domain, self.domain)
+        grounder.GrounderForTask(parsed_task, self.task)

@@ -1,172 +1,112 @@
-import src.PDDL.parser as parser
-import re
-import logging
+#
+
+# TODO: у методов проблема с началом и целью
 
 
-class Predicate:
-    def __init__(self, text):
-        self.positively = True
+class Method:
+    def __init__(self):
         self.name = ''
-        self.param_type = []
-
-        if text.find('not') != -1:
-            self.positively = False
-            text = parser.take_part(text)
-        self.name = re.search(r'\w+', text).group(0)
-        objects = re.findall(r'\?\w+ - \w+', text)
-        for type in objects:
-            self.param_type.append(type.split()[-1])
+        self.parameters = []
+        self.quantifier_for_subgoals = 'and'
+        self.subgoals = []
+        self.quantifier_for_ordering = 'and'
+        self.ordering = []
+        self.init = []
+        self.goal = []
+        self.level = 0
 
     def print(self):
-
-        if not self.positively:
-            print("not", end='')
-
-        print(self.name, *self.param_type)
-
-    def make_predicate(self, param):
-        new_predicate = '('
-        for i in range(len(param)):
-                if self.param_type[i] != param[i][-1]:
-                    logging.error("Неправильно определенные действия или не хватате предикатов!")
-        new_predicate += self.name
-        for i in param:
-            new_predicate += ' '
-            new_predicate += i[0]
-        new_predicate += ')'
-        return new_predicate
+        print(self.name)
+        for i in self.parameters:
+            i.print()
+        print(self.quantifier_for_subgoals)
+        for i in self.subgoals:
+            i.print()
+        print(self.quantifier_for_ordering)
+        for i in self.ordering:
+            i.print()
+        print('level:', self.level)
 
 
 class Action:
-    def __init__(self, text=None, domain=None):
-        if text is None and domain is None:
-            self.name = ''
-            self.parameters = []
-            self.quantify_for_precondition = ''
-            self.precondition = []
-            self.quantify_for_effect = ''
-            self.effect = []
-            self.duration = 1
-        else:
-
-            self.name = ''
-            self.parameters = []
-            self.quantify_for_precondition = ''
-            self.precondition = []
-            self.quantify_for_effect = ''
-            self.effect = []
-            self.duration = 1
-
-            self.name = re.sub(r':action ', '', re.search(r':action [\w, -]+', text).group(0))
-
-            parameters = parser.take_part(text)
-            parameters = re.findall(r'\?\w+ - \w+', parameters)
-            for param in parameters:
-                self.parameters.append([param.split()[0], param.split()[-1]])
-            text = parser.delete_part(text)
-            precondition = parser.take_part(text)
-
-            quantify = re.search(r':precondition\s\(and', text)
-            if quantify is not None:
-                if quantify.group(0).find('and') != -1:
-                    self.quantify_for_precondition = 'and'
-                else:
-                    self.quantify_for_precondition = 'or'
-            else:
-                precondition = '(' + precondition + ')'
-            while precondition.find(')') != -1:
-                positivity = True
-                predicate = parser.take_part(text)
-
-                predicate = parser.take_part(precondition)
-
-                if predicate.find('not') != -1:
-                    positivity = False
-                    predicate = parser.take_part(predicate)
-                name_predicate = re.search(r'\w+', predicate).group(0)
-                param = re.findall(r'\?\w+', predicate)
-                predicate_param = []
-                for i in param:
-                    for j in self.parameters:
-                        if j[0] == i:
-                            predicate_param.append(j)
-                for i in domain.predicates:
-                    if i.name == name_predicate:
-                        actual_predicate = i
-
-                if positivity:
-                    self.precondition.append(Predicate.make_predicate(actual_predicate, predicate_param))
-                else:
-                    self.precondition.append('(not ' + Predicate.make_predicate(actual_predicate, predicate_param) + ')')
-
-                precondition = parser.delete_part(precondition)
-            text = parser.delete_part(text)
-
-            if text.find('and') != -1:
-                self.quantify_for_effect = 'and'
-                text = parser.take_part(text)
-            elif text.find('or') != -1:
-                self.quantify_for_effect = 'or'
-                text = parser.take_part(text)
-            while text.find('(') != -1:
-                positivity = True
-                predicate = parser.take_part(text)
-                if predicate.find('not') != -1:
-                    positivity = False
-                    predicate = parser.take_part(predicate)
-
-                name_predicate = re.search(r'\w+', predicate).group(0)
-                param = re.findall(r'\?\w+', predicate)
-                predicate_param = []
-                for i in param:
-                    for j in self.parameters:
-                        if j[0] == i:
-                            predicate_param.append(j)
-                for i in domain.predicates:
-                    if i.name == name_predicate:
-                        actual_predicate = i
-                if positivity:
-                    self.effect.append(Predicate.make_predicate(actual_predicate, predicate_param))
-                else:
-                    self.effect.append('(not ' + Predicate.make_predicate(actual_predicate, predicate_param) + ')')
-                text = parser.delete_part(text)
+    def __init__(self):
+        self.name = ''
+        self.parameters = []
+        self.quantifier_for_precondition = 'and'
+        self.precondition = []
+        self.quantifier_for_effect = 'and'
+        self.effect = []
+        self.level = 0
 
     def print(self):
-        print('name:', self.name, '\n')
-        print('parameters:', *self.parameters, '\n')
-        print('precondition:', self.quantify_for_precondition)
-        for predicate in self.precondition:
-            print(predicate)
-        print('')
-        print('effect:', self.quantify_for_effect)
-        for predicate in self.effect:
-            print(predicate)
-
-    def action_for_method(self, parameters):
-        # TODO: возможно добавить проверку на совместимость типов
-        effect = []
-        precondition = []
-        conformity_parameters = []
-        for i in range(len(parameters)):
-            conformity_parameters.append([self.parameters[i][0], '$' + str(i) + '$'])
-        for i in self.effect:
-            eff = i
-            for j in range(len(conformity_parameters)):
-                eff = (eff.replace(conformity_parameters[j][0], conformity_parameters[j][1]))
-            effect.append(eff)
-        for i in range(len(effect)):
-            for j in range(len(parameters)):
-                effect[i] = effect[i].replace(conformity_parameters[j][1], parameters[j])
+        print(self.name)
+        for i in self.parameters:
+            i.print()
+        print(self.quantifier_for_precondition)
         for i in self.precondition:
-            pre = i
-            for j in range(len(conformity_parameters)):
-                pre = (pre.replace(conformity_parameters[j][0], conformity_parameters[j][1]))
-            precondition.append(pre)
-        for i in range(len(precondition)):
-            for j in range(len(parameters)):
-                precondition[i] = precondition[i].replace(conformity_parameters[j][1], parameters[j])
+            i.print()
+        print(self.quantifier_for_effect)
+        for i in self.effect:
+            i.print()
+        print('level:', self.level)
 
-        return precondition, effect
+    # def checker_for_using(self):
 
-    # def predicate_in_action(self, predicate):
+    # def use_action(self, parameters):
 
+
+# class Environment:
+#     def __init__(self):
+#         self.
+
+
+class Predicate:
+    def __init__(self):
+        self.name = ''
+        self.parameters = []
+        self.positively = True
+
+    def __eq__(self, other):
+        return self.name == other.name \
+               and self.positively == other.positively \
+               and self.parameters == other.parameters
+
+    def print(self):
+        if not self.positively:
+            print('not', self.name, *self.parameters)
+        else:
+            print(self.name, *self.parameters)
+
+
+class Parameter:
+    def __init__(self):
+        self.name = ''
+        self.type = ''
+
+    def __eq__(self, other):
+        return self.type == other.type
+
+    def print(self):
+        print(self.name, self.type)
+
+
+class Task:
+    def __init__(self):
+        self.name = ''
+        self.parameters = []
+        self.action = Action()
+
+    def print(self):
+        print(self.name)
+        print(*self.parameters)
+        self.action.print()
+
+
+class Order:
+    def __init__(self):
+        self.first = ''
+        self.second = ''
+
+    def print(self):
+        print(self.first)
+        print(self.second)

@@ -2,8 +2,7 @@
 # Если название домена не будет совпадать с требующимся у таски, программа выкинет ошибку.
 import sys
 import logging
-import src.PDDL.problem as prb
-import src.Algorithms.POP.POP as pop
+import src.PDDL.problem as pl
 
 
 def __main__():
@@ -27,8 +26,7 @@ def __main__():
         logging.error("Неверный путь к таске!")
         exit(2)
 
-    problem = prb.Problem(domain, task)
-    pop.POP(problem)
+    problem = pl.Problem(domain, task)
 
 
 if __name__ == "__main__":

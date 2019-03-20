@@ -9,7 +9,6 @@ class ParserForDomain:
         self.name = ''
         self.requirements = ''
         self.types = ''
-        self.constants = ''
         self.predicates = ''
         self.actions = []
         self.methods = []
@@ -27,10 +26,6 @@ class ParserForDomain:
             self.types = take_part(domain)
             domain = delete_part(domain)
 
-        if domain.find(':constants') != -1:
-            self.constants = take_part(domain)
-            domain = delete_part(domain)
-
         if domain.find(':predicates') != -1:
             self.predicates = take_part(domain)
             domain = delete_part(domain)
@@ -40,7 +35,7 @@ class ParserForDomain:
             domain = delete_part(domain)
 
         while domain.find(':method') != -1:
-            self.methods.append(take_part(domain))
+            self.methods.append([take_part(domain), 0])
             domain = delete_part(domain)
 
     def print(self):
@@ -53,9 +48,6 @@ class ParserForDomain:
         print(self.types)
         print('********************************************************************************************')
 
-        print(self.constants)
-        print('********************************************************************************************')
-
         print(self.predicates)
         print('********************************************************************************************')
 
@@ -64,8 +56,9 @@ class ParserForDomain:
             print('********************************************************************************************')
 
         for method in self.methods:
-            print(method)
+            print(method[0])
             print('********************************************************************************************')
+
 
 class ParserForTask:
     def __init__(self, text_task):

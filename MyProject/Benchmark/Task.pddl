@@ -1,6 +1,6 @@
 (define (problem ROBOT-1)
 (:domain robot)
-(:objects p - package r1 r2 - room d - door)
+(:objects p - package r1 - room r2 - room d - door)
 (:init (rloc r1) (armempty) (in p r1) (door r1 r2 d))
-(:goal (and (rloc r2) (in p r2) (armempty)))
+(:goal (rloc r2) (in p r2) (armempty))
 )

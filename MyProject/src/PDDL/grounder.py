@@ -1,222 +1,189 @@
-import src.PDDL.domain as dom
-import src.PDDL.parser as parser
+#
 import src.PDDL.fields as fields
-import src.PDDL.task as tsk
-import re
+import src.PDDL.parser as parser
 
 
-def make_domain(file):
-    domain = dom.Domain()
+class GrounderForDomain:
+    def __init__(self, file, domain):
+        domain.name = file.name.split()[1]
 
-    parsed_domain = parser.ParserForDomain(file)
+        domain.requirements = file.requirements.split()[1:]
 
-    domain.name = re.sub(r'domain ', '', parsed_domain.name)
+        domain.types = set(file.types.split()[1:])
 
-    domain.requirements = re.sub(r':requirements ', '', parsed_domain.requirements).split()
+        predicates = file.predicates
+        while predicates.find('(') != -1:
+            domain.predicates.add(parser.take_part(predicates))
+            predicates = parser.delete_part(predicates)
 
-    domain.types = re.sub(r':types ', '', parsed_domain.types).split()
+        actions = file.actions
+        for i in actions:
+            domain.actions.add(make_action(i))
 
-    domain.constants = re.sub(r':constants ', '', parsed_domain.constants).split()
-
-    predicates = re.sub(r':predicates ', '', parsed_domain.predicates)
-    while predicates.find(')') != -1:
-        domain.predicates.append(fields.Predicate(parser.take_part(predicates)))
-        predicates = parser.delete_part(predicates)
-
-    for action in parsed_domain.actions:
-        domain.actions.append(fields.Action(action, domain))
-
-    define_methods(parsed_domain.methods, domain)
-
-    return domain
+        methods = file.methods
+        for i in methods:
+            if i[1] != 1:
+                domain.methods.add(make_method(domain, methods, i))
 
 
-def make_task(file):
-    task = tsk.Task()
+class GrounderForTask:
+    def __init__(self, file, task):
+        task.name = file.name.split()[1]
+        task.domain = file.name_of_domain.split()[1]
+        task.objects = []
 
-    parsed_task = parser.ParserForTask(file)
+        objects = file.objects.split()[1:]
 
-    task.name = re.sub(r'problem ', '', parsed_task.name)
+        for i in range(len(objects)):
+            if objects[i] == '-':
+                param = fields.Parameter()
+                param.name = objects[i-1]
+                param.type = objects[i+1]
+                task.objects.append(param)
 
-    task.name_of_domain = re.sub(r':domain ', '', parsed_task.name_of_domain)
+        task.init = set()
+        text_init = file.init
 
-    parsed_objects = re.sub(r':objects', '', parsed_task.objects).split()
-    list_of_objects = []
-    last_i = -1
-    i = 0
-    while i != len(parsed_objects):
-        if parsed_objects[i] == '-':
-            for j in range(i - 1, last_i, -1):
-                list_of_objects.append([parsed_objects[j], parsed_objects[i + 1]])
-            i += 1
-            last_i = i
-        i += 1
-    task.objects = list_of_objects
+        while text_init.find('(') != -1:
+            predicate = parser.take_part(text_init)
+            task.init.add('(' + predicate + ')')
+            text_init = parser.delete_part(text_init)
 
-    parsed_init = parsed_task.init
-    while parsed_init.find('(') != -1:
-        pre = parser.take_part(parsed_init)
-        task.init.append('(' + pre + ')')
-        parsed_init = parser.delete_part(parsed_init)
+        task.goal = set()
+        text_goal = file.goal
 
-    parsed_goal = parsed_task.goal
-    # TODO: только и
-    if parsed_goal.find('(and'):
-        task.quantify_for_goal = 'and'
-        parsed_goal = parser.take_part(parsed_goal)
-    while parsed_goal.find('(') != -1:
-        pre = parser.take_part(parsed_goal)
-        task.goal.append('(' + pre + ')')
-        parsed_goal = parser.delete_part(parsed_goal)
-
-    return task
+        while text_goal.find('(') != -1:
+            predicate = parser.take_part(text_goal)
+            task.goal.add('(' + predicate + ')')
+            text_goal = parser.delete_part(text_goal)
 
 
-def define_methods(methods, domain):
-    names_of_methods = []
-    for i in methods:
-        names_of_methods.append([re.findall(r'\w+', (re.search(r':method [\w, -]+', i).group(0)))[1], False, i])
-    for i in names_of_methods:
-        if not i[1]:
-            make_action_from_methods(i, names_of_methods, domain)
+def make_method(domain, methods, pair_method):
+    pair_method[1] = 1
+    method = pair_method[0]
+    new_method = fields.Method()
+    new_method.name = method.split()[1]
 
+    parameters = parser.take_part(method).split()
+    for i in range(len(parameters)):
+        if parameters[i] == '-':
+            parameter = fields.Parameter()
+            parameter.name = parameters[i - 1]
+            parameter.type = parameters[i + 1]
+            new_method.parameters.append(parameter)
 
-def make_action_from_methods(method, names, domain):
-    # TODO: снова вопрос о и/или. Надо узнать нужен ли или вообще
-    new_action = fields.Action()
-    new_action.name = method[0]
+    method = parser.delete_part(method)
 
-    text = method[2]
-    text_parameters = parser.take_part(text)
-    parameters = re.findall(r'\?\w+ - \w+', text_parameters)
-    for param in parameters:
-        new_action.parameters.append([param.split()[0], param.split()[-1]])
-    text = parser.delete_part(text)
-    subgoals = take_tasks(parser.take_part(text))
-    text = parser.delete_part(text)
-    ordering = take_ordering(parser.take_part(text))
-    text = parser.delete_part(text)
+    text_subgoals = parser.take_part(method)
+    method = parser.delete_part(method)
 
-    order = 'init'
-    goal_fluent = []
-    precondition = []
-    while order != 'goal':
-        order = find_order(order, ordering)
-        if order == 'goal':
-            break
-        eff = []
-        action = find_action(domain, subgoals, order, names)
-        pre, eff = fields.Action.action_for_method(action, find_order_action(order, subgoals)[2])
-        precondition.append(pre)
-        goal_fluent = fluent_for_goal(goal_fluent, eff)
-
-    initial_fluent = fluent_for_initial(precondition, parameters)
-    for i in goal_fluent:
-        new_action.effect.append(i)
-    for i in initial_fluent:
-        new_action.precondition.append(i)
-    domain.actions.append(new_action)
-    method[1] = True
-    for i in range(len(names)):
-        if method[0] == names[i][0]:
-            names[i][1] = True
-
-
-def take_tasks(text):
-    # TODO: сделал только для и. Или слишком легко, поэтому если надо будет добавлю.
-    actions = []
-
-    if re.search(r'and\s', text) is None:
-        text = '(' + text + ')'
-    while text.find('(') != -1:
-        text_task = parser.take_part(text)
-        name = re.search(r'[\w,-]+', text_task).group(0)
-
+    if text_subgoals.find('(and ') != -1:
+        new_method.quantifier_for_subgoals = 'and'
+    elif text_subgoals.find('(or ') != -1:
+        new_method.quantifier_for_subgoals = 'or'
+    while text_subgoals.find('(') != -1:
+        text_task = parser.take_part(text_subgoals)
+        new_task = fields.Task()
+        new_task.name = text_task.split()[0]
         text_task = parser.take_part(text_task)
-        action = re.search(r'[\w,-]+', text_task).group(0)
-        parameters = re.findall(r'\?\w+', text_task)
+        # print(text_task)
+        new_task.action, new_task.parameters = find_action(domain, text_task.split()[0], methods), text_task.split()[1:]
+        new_method.subgoals.append(new_task)
+        text_subgoals = parser.delete_part(text_subgoals)
+        if new_method.level <= new_task.action.level:
+            new_method.level = new_task.action.level + 1
 
-        actions.append([name, action, parameters])
-        text = parser.delete_part(text)
+    text_ordering = parser.take_part(method)
+    method = parser.delete_part(method)
 
-    return actions
+    if text_ordering.find('(and ') != -1:
+        new_method.quantifier_for_ordering = 'and'
+    elif text_ordering.find('(or ') != -1:
+        new_method.quantifier_for_ordering = 'or'
 
+    while text_ordering.find('(') != -1:
+        new_order = fields.Order()
+        text_order = parser.take_part(text_ordering).split()
+        text_ordering = parser.delete_part(text_ordering)
+        new_order.first = text_order[0]
+        new_order.second = text_order[2]
+        new_method.ordering.append(new_order)
 
-def take_ordering(text):
-    # TODO: пока только и, потому что тут нетривиально :)
-    ordering = []
-
-    if re.search(r'and\s', text) is None:
-        text = '(' + text + ')'
-
-    while text.find('(') != -1:
-        text_order = parser.take_part(text)
-
-        order = text_order.split()
-        order = [order[0], order[2]]
-        ordering.append(order)
-
-        text = parser.delete_part(text)
-    return ordering
-
-
-def find_order(name, ordering):
-    for i in ordering:
-        if i[0] == name:
-            return i[1]
+    return new_method
 
 
-def find_order_action(order, subgoals):
-    for i in subgoals:
-        if i[0] == order:
-            return i
-
-
-def find_action(domain, subgoals, order, names):
+def make_action(text):
     action = fields.Action()
-    name_order_action = find_order_action(order, subgoals)
-    for i in domain.actions:
-        if i.name == name_order_action[1]:
-            action = i
-            break
-    else:
-        for i in names:
-            if i[0] == name_order_action[1]:
-                make_action_from_methods(i, names, domain)
-                for j in domain.actions:
-                    if j.name == name_order_action[1]:
-                        action = j
-                        break
+
+    action.name = text.split()[1]
+
+    parameters = parser.take_part(text).split()
+    for i in range(len(parameters)):
+        if parameters[i] == '-':
+            parameter = fields.Parameter()
+            parameter.name = parameters[i - 1]
+            parameter.type = parameters[i + 1]
+            action.parameters.append(parameter)
+    text = parser.delete_part(text)
+
+    precondition = parser.take_part(text)
+    text = parser.delete_part(text)
+    if precondition.find('(and ') != -1:
+        action.quantifier_for_precondition = 'and'
+        precondition = parser.take_part(precondition)
+    elif precondition.find('(or ') != -1:
+        action.quantifier_for_precondition = 'or'
+        precondition = parser.take_part(precondition)
+    while precondition.find('(') != -1:
+        action.precondition.append(make_predicate(parser.take_part(precondition)))
+        precondition = parser.delete_part(precondition)
+
+    effect = parser.take_part(text)
+    text = parser.delete_part(text)
+    if effect.find('(and ') != -1:
+        action.quantifier_for_effect = 'and'
+        effect = parser.take_part(effect)
+    elif effect.find('(or ') != -1:
+        action.quantifier_for_effect = 'or'
+        effect = parser.take_part(effect)
+    while effect.find('(') != -1:
+        action.precondition.append(make_predicate(parser.take_part(effect)))
+        effect = parser.delete_part(effect)
+
     return action
 
 
-def fluent_for_goal(old_fluent, effects):
-    for i in effects:
-        for j in range(len(old_fluent)):
-            eff = i
-            if eff.find('(not ') != -1:
-                eff = parser.take_part(parser.take_part(eff))
-            if old_fluent[j].find(eff) != -1:
-                old_fluent[j] = i
-                break
-        else:
-            old_fluent.append(i)
-    return old_fluent
+def make_predicate(text):
+    predicate = fields.Predicate()
+
+    if text.find('(not ') != -1:
+        predicate.positively = False
+        text = parser.take_part(text)
+
+    text = text.split()
+
+    predicate.name = text[0]
+
+    param = fields.Parameter()
+
+    for i in range(1, len(text)):
+        if text[i] == '-':
+            param.name = text[i - 1]
+            param.name = text[i + 1]
+            predicate.parameters.add(param)
+
+    return predicate
 
 
-def fluent_for_initial(pre, parameters):
-    new_parameters = []
-    preresult = []
-    for i in parameters:
-        new_parameters.append([re.search(r'\?\w+', i).group(0), True])
-    for i in pre:
-        for j in i:
-            for y in new_parameters:
-                if j.find(y[0]) != -1 and y[1]:
-                    preresult.append(i)
-                    y[1] = False
-    result = set()
-    for i in preresult:
-        for j in i:
-            result.add(j)
-    return list(result)
+def find_action(domain, name_action, methods):
+    for i in domain.actions:
+        if name_action == i.name:
+            return i
+    for i in domain.methods:
+        if i.name == name_action:
+            return i
+    for i in methods:
+        if i[0].find(':method ' + name_action) != -1 and i[1] == 0:
+            method = make_method(domain, methods, i)
+            domain.methods.add(method)
+            return method
